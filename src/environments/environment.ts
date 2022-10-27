@@ -3,6 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
+  webservice: "https://orial.test2.infogones.com/api",
   production: false
 };
 
