@@ -2,11 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-
-interface TokenResponse {
-  success: boolean;
-  token: string;
-}
+import { TokenResult } from '../models/http';
 
 @Injectable({
   providedIn: 'root'
@@ -24,16 +20,13 @@ export class TokenService {
   ) { }
 
   connect(login: string, password: string): Observable<boolean>{
-    return this.http.post<TokenResponse>(environment.webservice + "/jwt/session", { username: login, password: password}).pipe(
+    return this.http.post<TokenResult>("/jwt/session", { username: login, password: password}).pipe(
       tap((response) => {
         if(response.success){
           this.__currentToken$.next(response.token);
         }
       }),
       map((response) => response.success),
-      catchError((err, caught) => {
-        return of(false);
-      })
     )
   }
 
