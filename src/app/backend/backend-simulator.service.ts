@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { generateSecret, SignJWT } from 'jose';
 import { delay, from, map, Observable, of, switchMap, tap } from 'rxjs';
-import { ConnectionPayload, TokenResult } from '../models/http';
+import { ConnectionPayload, DataResult, TokenResult } from '../models/http';
 
 const users: {username:string, password: string}[] = [
   {username:"bec", password:"test"}
@@ -20,18 +20,20 @@ export class BackendSimulatorService {
   constructor() { }
 
   private generateToken(caller: string, isRefreshToken: boolean): Observable<string> {
-    return from(new SignJWT({caller: caller})
+    return from(secret).pipe(
+      switchMap((key) => new SignJWT({caller: caller})
       .setIssuedAt()
       .setProtectedHeader({alg: "HS256"})
       .setExpirationTime(isRefreshToken ? "5m" : "30s")
-      .sign(secret))
+      .sign(key)
+    ))
   }
 
   public connect(data: ConnectionPayload) : Observable<TokenResult>{
-    console.log("SIMULATOR INPUT", data);
     return of(false).pipe(
       map(() => {
-        return (users.filter((u) => u.username === data.username && u.password === data.password) !== null)
+        console.log("test",users.find((u) => u.username === data.username && u.password === data.password));
+        return (users.find((u) => u.username === data.username && u.password === data.password) !== undefined)
       }),
       switchMap(found => found ? this.generateToken(data.username, true): of("")),
       tap((token) => {
@@ -44,9 +46,6 @@ export class BackendSimulatorService {
           success: (token !== ""),
           token: token
         }
-      }),
-      tap((data) => {
-        console.log("SIMULATOR OUTPUT", data);
       }),
       delay(250)
     )
@@ -65,4 +64,15 @@ export class BackendSimulatorService {
       delay(250)
     )
   } 
+
+  public getData(token: string) : Observable<DataResult> {
+    const data: DataResult = {
+      data: "Hello world!",
+      time: new Date(),
+      test: true
+    }
+    return of(data).pipe(
+      delay(250)
+    );
+  }
 }

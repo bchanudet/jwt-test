@@ -22,6 +22,7 @@ export class TokenService {
   connect(login: string, password: string): Observable<boolean>{
     return this.http.post<TokenResult>("/jwt/session", { username: login, password: password}).pipe(
       tap((response) => {
+        console.log("TOKENSVC", response)
         if(response.success){
           this.__currentToken$.next(response.token);
         }
