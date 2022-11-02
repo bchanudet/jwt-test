@@ -9,11 +9,17 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { httpInterceptorProviders } from './interceptors';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './components/login/login.component';
+import { BackendSimulatorComponent } from './components/backend-simulator/backend-simulator.component';
+import { InfosComponent } from './components/infos/infos.component';
+import { UserComponent } from './components/user/user.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    BackendSimulatorComponent,
+    InfosComponent,
+    UserComponent
   ],
   imports: [
     BrowserModule,

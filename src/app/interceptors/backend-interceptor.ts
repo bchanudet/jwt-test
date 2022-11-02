@@ -1,6 +1,6 @@
 import { HttpContext, HttpContextToken, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest, HttpResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { map, Observable, of, switchMap, tap } from "rxjs";
+import { catchError, map, Observable, of, switchMap, tap, throwError } from "rxjs";
 import { BackendSimulatorService } from "../backend/backend-simulator.service";
 import { ConnectionPayload, TokenResult } from "../models/http";
 import { TokenService } from "../services/token.service";
@@ -36,16 +36,7 @@ export class BackendInterceptor implements HttpInterceptor{
 
     if(req.method === "POST" && req.url.endsWith("/jwt/token")){
 
-      let tokenHeader = req.headers.get("Authorization");
-
-      if(tokenHeader === null){
-        return of(new HttpResponse({
-          body: "Unauthorized",
-          status: 400
-        }))
-      }
-
-      tokenHeader = tokenHeader.split(" ")[1];
+      let tokenHeader = req.body.refreshToken;
 
       return this.backendSimulator.refreshToken(tokenHeader).pipe(
         map((data) => {
@@ -53,15 +44,79 @@ export class BackendInterceptor implements HttpInterceptor{
             body: data,
             status: data.success ? 200 : 401
           });
-        })
+        }),
+        catchError((err) => {
+          return throwError(() => new HttpResponse({
+            status: 401,
+            statusText: "Unauthorized"
+          }))
+        }),
       )
-      
+
     }
 
-    return of(new HttpResponse({
+    if(req.method === "GET" && req.url.endsWith("users")){
+
+      let tokenHeader = req.headers.get("Authorization");
+      if(tokenHeader === null){
+        return throwError(() => new HttpResponse({
+          body: "Unauthorized",
+          status: 400
+        }))
+      }
+
+      tokenHeader = tokenHeader.split(" ")[1];
+
+      return this.backendSimulator.getData(tokenHeader).pipe(
+        map((data) => {
+          return new HttpResponse({
+            body: data,
+            status: 200
+          });
+        }),
+        catchError((err) => {
+          return throwError(() => new HttpResponse({
+            status: 401,
+            statusText: "Unauthorized"
+          }))
+        }),
+      )
+    }
+
+    if(req.method === "GET" && req.url.includes("user/")){
+
+      let tokenHeader = req.headers.get("Authorization");
+      if(tokenHeader === null){
+        return throwError(() => new HttpResponse({
+          body: "Unauthorized",
+          status: 400
+        }))
+      }
+
+      tokenHeader = tokenHeader.split(" ")[1];
+
+      const i : number = parseInt(req.url.split("/").reverse()[0]);
+
+      return this.backendSimulator.getOneData(tokenHeader, i).pipe(
+        map((data) => {
+          return new HttpResponse({
+            body: data,
+            status: 200
+          });
+        }),
+        catchError((err) => {
+          return throwError(() => new HttpResponse({
+            status: 401,
+            statusText: "Unauthorized"
+          }))
+        }),
+      )
+    }
+
+    return throwError(() => new HttpResponse({
       status: 404,
       statusText: "Not found"
     }));
-    
+
   }
 }

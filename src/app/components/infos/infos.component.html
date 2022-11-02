@@ -1,0 +1,8 @@
+<h5>Users</h5>
+<ul *ngIf="(users$ | async) as users">
+  <li *ngFor="let u of users; index as i">
+    <a routerLink="/info/{{i}}">
+      {{u.name}}
+    </a>
+  </li>
+</ul>

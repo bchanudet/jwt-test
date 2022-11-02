@@ -1,0 +1,14 @@
+<h5>Valid Refresh tokens:</h5>
+<ul>
+  <li *ngFor="let t of validRefreshTokens">
+    <a (click)="revokeRefresh(t)" class="btn btn-danger">X</a>
+    <code>{{t}}</code>
+  </li>
+</ul>
+<h5>Valid Access tokens:</h5>
+<ul>
+  <li *ngFor="let t of validAccessTokens">
+    <a (click)="revokeAccess(t)" class="btn btn-danger">X</a>
+    <code>{{t}}</code>
+  </li>
+</ul>

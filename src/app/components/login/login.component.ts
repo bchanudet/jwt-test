@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
     this.tokenSvc.connect(this.form.get("username")?.value, this.form.get("password")?.value).subscribe({
       next: (success) => {
         if(success)
-          this.router.navigate(['info']);
+          this.router.navigate(['infos']);
       },
       error: (err) => {
         console.error(err);

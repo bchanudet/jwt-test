@@ -3,11 +3,15 @@
     <a href="" class="navbar-brand">JWT Token Testing</a>
   </div>
 </nav>
-<div class="container">
+<div class="container-fluid">
   <div class="row">
-    <div class="col-12">
-      <app-login></app-login>
+    <div class="col-8">
+      <h1>Frontend</h1>
+      <router-outlet></router-outlet>
+    </div>
+    <div class="col-4">
+      <h1>Backend</h1>
+      <app-backend-simulator></app-backend-simulator>
     </div>
   </div>
-  <router-outlet></router-outlet>
 </div>

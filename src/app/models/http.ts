@@ -8,8 +8,11 @@ export interface TokenResult {
     token: string;
 }
 
-export interface DataResult{
-    test: boolean;
-    time: Date;
-    data: string;
+export interface UserResult {
+  id: string;
+  name: string;
+  email: string;
+  job_title: string;
+  created_at: string;
+  updated_at: string;
 }

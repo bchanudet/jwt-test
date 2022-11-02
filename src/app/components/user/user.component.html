@@ -1,0 +1,9 @@
+<div class="card" *ngIf="(user$ | async) as user">
+  <div class="card-header">
+    {{user.name}}
+  </div>
+  <div class="card-body">
+    <p>Email: {{user.email}}</p>
+    <p>Job: {{user.job_title}}</p>
+  </div>
+</div>
